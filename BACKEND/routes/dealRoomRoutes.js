@@ -5,7 +5,7 @@ import {
     getDealRoomDetails, 
     getMyDealRooms, 
     postMessageInDealRoom 
-} from '../controllers/DealRoomController.js';
+} from '../controllers/dealRoomController.js';
 import { protect } from '../middleware/auth.js';
 
 // Initialize the router
