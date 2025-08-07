@@ -47,7 +47,7 @@ const PORT = process.env.PORT || 5001;
 // Define allowed origins
 const allowedOrigins = [
     'http://localhost:5173', // Your local frontend
-    'https://venturvault.vercel.app' // Your Vercel frontend URL
+    'https://venturvault.vercel.app/' // Your Vercel frontend URL
 ];
 
 app.use(cors({
