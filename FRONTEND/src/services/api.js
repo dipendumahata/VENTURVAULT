@@ -5,7 +5,7 @@ import axios from 'axios';
 // 1. Create a new Axios instance with a base URL.
 // This means you don't have to type 'http://localhost:5001/api' for every request.
 const API = axios.create({
-  baseURL: 'https://venturvault.onrender.com'||'http://localhost:5001/api',
+  baseURL: 'https://venturvault.onrender.com/api'||'http://localhost:5001/api',
   headers: {
     'Content-Type': 'application/json',
   },
