@@ -3,7 +3,10 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://venturvault.onrender.com/api',
+  baseURL: 'https://venturvault.onrender.com/api', 
+  baseURL: process.env.NODE_ENV === 'development'
+    ? 'http://localhost:5001/api'
+    : 'https://venturvault.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },
