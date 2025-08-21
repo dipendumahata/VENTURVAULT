@@ -1,68 +1,72 @@
-// FILE: /src/components/layout/Footer.js
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BriefcaseIcon } from '../../assets/icons'; // Assuming icons are managed in a central file
+import { BriefcaseIcon } from '../../assets/icons.jsx'; // Assuming icons are in this file
 
 const Footer = () => {
+    // Helper function to scroll to the top of the page on link click
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <footer className="bg-slate-900 text-slate-400">
-            <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-                    {/* Column 1: Brand */}
+            <div className="max-w-7xl mx-auto py-16 px-6 lg:px-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10">
+
+                    {/* Brand Section (takes full width on mobile) */}
                     <div className="col-span-2 lg:col-span-1">
-                        <Link to="/" className="flex items-center space-x-2 mb-4">
-                            <BriefcaseIcon className="h-7 w-7 text-teal-500" />
-                            <span className="font-bold text-xl text-white">VENTURVAULT</span>
+                        <Link to="/" onClick={scrollToTop} className="flex items-center space-x-2 mb-4">
+                            <BriefcaseIcon className="h-8 w-8 text-teal-500" />
+                            <span className="font-bold text-2xl text-white">VENTURVAULT</span>
                         </Link>
-                        <p className="text-sm">
+                        <p className="text-sm leading-6">
                             Empowering India's next generation of entrepreneurs through technology, mentorship, and capital.
                         </p>
                     </div>
 
-                    {/* Column 2: Solutions */}
+                    {/* Solutions */}
                     <div>
-                        <h3 className="text-sm font-semibold text-slate-300 tracking-wider uppercase">Solutions</h3>
-                        <ul className="mt-4 space-y-2">
-                            <li><Link to="/for-founders" className="text-sm hover:text-white transition-colors">For Founders</Link></li>
-                            <li><Link to="/for-investors" className="text-sm hover:text-white transition-colors">For Investors</Link></li>
-                            <li><Link to="/for-advisors" className="text-sm hover:text-white transition-colors">For Advisors</Link></li>
+                        <h3 className="text-sm font-semibold text-white tracking-wider uppercase">Solutions</h3>
+                        <ul className="mt-4 space-y-3">
+                            <li><Link to="/for-founders" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">For Founders</Link></li>
+                            <li><Link to="/for-investors" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">For Investors</Link></li>
+                            <li><Link to="/for-advisors" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">For Advisors</Link></li>
                         </ul>
                     </div>
 
-                    {/* Column 3: Resources */}
+                    {/* Resources */}
                     <div>
-                        <h3 className="text-sm font-semibold text-slate-300 tracking-wider uppercase">Resources</h3>
-                        <ul className="mt-4 space-y-2">
-                            <li><Link to="/blog" className="text-sm hover:text-white transition-colors">Blog</Link></li>
-                            <li><Link to="/guides" className="text-sm hover:text-white transition-colors">Founder Guides</Link></li>
-                            <li><Link to="/insights" className="text-sm hover:text-white transition-colors">Market Insights</Link></li>
+                        <h3 className="text-sm font-semibold text-white tracking-wider uppercase">Resources</h3>
+                        <ul className="mt-4 space-y-3">
+                            <li><Link to="/blog" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">Blog</Link></li>
+                            <li><Link to="/guides" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">Founder Guides</Link></li>
+                            <li><Link to="/insights" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">Market Insights</Link></li>
                         </ul>
                     </div>
 
-                    {/* Column 4: Company */}
+                    {/* Company */}
                     <div>
-                        <h3 className="text-sm font-semibold text-slate-300 tracking-wider uppercase">Company</h3>
-                        <ul className="mt-4 space-y-2">
-                            <li><Link to="/about" className="text-sm hover:text-white transition-colors">About Us</Link></li>
-                            <li><Link to="/careers" className="text-sm hover:text-white transition-colors">Careers</Link></li>
-                            <li><Link to="/contact" className="text-sm hover:text-white transition-colors">Contact</Link></li>
+                        <h3 className="text-sm font-semibold text-white tracking-wider uppercase">Company</h3>
+                        <ul className="mt-4 space-y-3">
+                            <li><Link to="/about" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">About Us</Link></li>
+                            <li><Link to="/careers" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">Careers</Link></li>
+                            <li><Link to="/contact" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">Contact</Link></li>
                         </ul>
                     </div>
 
-                    {/* Column 5: Legal */}
+                    {/* Legal */}
                     <div>
-                        <h3 className="text-sm font-semibold text-slate-300 tracking-wider uppercase">Legal</h3>
-                        <ul className="mt-4 space-y-2">
-                            <li><Link to="/privacy" className="text-sm hover:text-white transition-colors">Privacy Policy</Link></li>
-                            <li><Link to="/terms" className="text-sm hover:text-white transition-colors">Terms of Service</Link></li>
+                        <h3 className="text-sm font-semibold text-white tracking-wider uppercase">Legal</h3>
+                        <ul className="mt-4 space-y-3">
+                            <li><Link to="/privacy" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">Privacy Policy</Link></li>
+                            <li><Link to="/terms" onClick={scrollToTop} className="hover:text-teal-400 transition-colors">Terms of Service</Link></li>
                         </ul>
                     </div>
                 </div>
 
-                {/* Bottom section with copyright */}
-                <div className="mt-12 border-t border-slate-800 pt-8 text-sm text-center">
-                    <p>&copy; {new Date().getFullYear()} VENTURVAULT India. A venture from Kolkata, West Bengal.</p>
+                {/* Bottom Section */}
+                <div className="mt-12 border-t border-slate-800 pt-8 text-center text-sm">
+                    <p>&copy; {new Date().getFullYear()} VENTURVAULT India. All rights reserved.</p>
                 </div>
             </div>
         </footer>

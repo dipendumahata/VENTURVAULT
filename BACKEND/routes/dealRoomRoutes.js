@@ -4,7 +4,8 @@ import express from 'express';
 import { 
     getDealRoomDetails, 
     getMyDealRooms, 
-    postMessageInDealRoom 
+    postMessageInDealRoom,
+    deleteDealRoom
 } from '../controllers/dealRoomController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -29,7 +30,8 @@ router.route('/')
  * @access  Private (User must be a member of the room)
  */
 router.route('/:id')
-  .get(getDealRoomDetails);
+  .get(getDealRoomDetails)
+  .delete(deleteDealRoom);
 
 /**
  * @route   POST /api/deal-rooms/:id/messages

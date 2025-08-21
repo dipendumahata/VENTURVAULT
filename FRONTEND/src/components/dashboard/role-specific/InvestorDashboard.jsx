@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchInvestorPortfolio, fetchAllGigs, fetchAllLoanProducts } from '../../../store/dataSlice.js';
+import { fetchInvestorPortfolio, fetchAllProposals, fetchAllGigs, fetchAllLoanProducts } from '../../../store/dataSlice.js';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const InvestorDashboard = () => {
     const dispatch = useDispatch();
-    const [activeTab, setActiveTab] = useState('myPortfolio');
-    const { portfolio, gigs, loanProducts, loading } = useSelector((state) => state.data);
+    const [activeTab, setActiveTab] = useState('browseProposals');
+    const { portfolio, proposals, gigs, loanProducts, loading } = useSelector((state) => state.data);
 
     useEffect(() => {
         dispatch(fetchInvestorPortfolio());
+        dispatch(fetchAllProposals());
         dispatch(fetchAllGigs());
         dispatch(fetchAllLoanProducts());
     }, [dispatch]);
 
     const tabs = [
         { id: 'myPortfolio', label: 'My Portfolio' },
+        { id: 'browseProposals', label: 'Browse Proposals' },
         { id: 'browseGigs', label: 'Browse Gigs' },
         { id: 'browseLoans', label: 'Browse Loans' },
     ];
@@ -33,10 +35,18 @@ const InvestorDashboard = () => {
                         </Link>
                     ))
                 ) : <p className="text-center p-8 text-slate-500">Your portfolio is empty.</p>;
+            case 'browseProposals':
+                 return proposals.length > 0 ? (
+                    proposals.slice(0, 5).map(p => (
+                        <Link to={`/proposals/${p._id}`} key={p._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
+                            <p className="font-semibold text-slate-800">{p.title}</p>
+                        </Link>
+                    ))
+                ) : <p className="text-center p-8 text-slate-500">No proposals available.</p>;
             case 'browseGigs':
                  return gigs.length > 0 ? (
                     gigs.slice(0, 5).map(g => (
-                        <Link to="/gigs" key={g._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
+                        <Link to={`/gigs/${g._id}`} key={g._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
                             <p className="font-semibold text-slate-800">{g.title}</p>
                         </Link>
                     ))
@@ -44,7 +54,7 @@ const InvestorDashboard = () => {
             case 'browseLoans':
                 return loanProducts.length > 0 ? (
                     loanProducts.slice(0, 5).map(l => (
-                        <Link to="/loan-products" key={l._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
+                        <Link to={`/loan-products/${l._id}`} key={l._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
                             <p className="font-semibold text-slate-800">{l.productName}</p>
                         </Link>
                     ))
@@ -83,3 +93,4 @@ const InvestorDashboard = () => {
 };
 
 export default InvestorDashboard;
+

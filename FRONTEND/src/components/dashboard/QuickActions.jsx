@@ -16,7 +16,6 @@ const QuickActions = ({ userRole }) => {
             break;
         case 'investor':
             actions = [
-                { name: 'Browse All Proposals', link: '/proposals' },
                 { name: 'View My Portfolio', link: '/portfolio' },
             ];
             break;

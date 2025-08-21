@@ -15,7 +15,11 @@ const UserSchema = new mongoose.Schema({
         skill: { type: String },
         endorsedBy: { type: mongoose.Schema.ObjectId, ref: 'User' }
     }],
-    isVerified: { type: Boolean, default: false }
+    isVerified: { type: Boolean, default: false },
+    // --- NEW COMMON FIELDS ---
+    location: { type: String, default: '' }, // e.g., "Kolkata, West Bengal"
+    linkedin: { type: String, default: '' }, // URL to LinkedIn profile
+    bio: { type: String, maxlength: 500, default: '' } // A short summary
   },
   isActive: { type: Boolean, default: true },
 }, { timestamps: true });
@@ -38,4 +42,3 @@ UserSchema.methods.getSignedJwtToken = function() {
 };
 
 export default mongoose.model('User', UserSchema);
-

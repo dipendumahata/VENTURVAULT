@@ -27,7 +27,7 @@ const BusinessDashboard = () => {
         switch (activeTab) {
             case 'browseProposals':
                 return proposals.length > 0 ? (
-                    proposals.slice(0, 5).map(p => ( // Show first 5 as a preview
+                    proposals.slice(0, 5).map(p => (
                         <Link to={`/proposals/${p._id}`} key={p._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
                             <p className="font-semibold text-slate-800">{p.title}</p>
                             <p className="text-sm text-slate-500">By: {p.businessId.profile.firstName}</p>
@@ -37,7 +37,7 @@ const BusinessDashboard = () => {
             case 'browseGigs':
                 return gigs.length > 0 ? (
                     gigs.slice(0, 5).map(g => (
-                        <Link to="/gigs" key={g._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
+                        <Link to={`/gigs/${g._id}`} key={g._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
                             <p className="font-semibold text-slate-800">{g.title}</p>
                             <p className="text-sm text-slate-500">Price: ₹{g.price}</p>
                         </Link>
@@ -46,7 +46,7 @@ const BusinessDashboard = () => {
             case 'browseLoans':
                 return loanProducts.length > 0 ? (
                     loanProducts.slice(0, 5).map(l => (
-                        <Link to="/loan-products" key={l._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
+                        <Link to={`/loan-products/${l._id}`} key={l._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
                             <p className="font-semibold text-slate-800">{l.productName}</p>
                             <p className="text-sm text-slate-500">Type: {l.loanType.replace('_', ' ')}</p>
                         </Link>

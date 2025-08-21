@@ -98,3 +98,36 @@ export const postMessageInDealRoom = async (req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * @desc    Delete a Deal Room
+ * @route   DELETE /api/deal-rooms/:id
+ * @access  Private (User must be a member of the room)
+ */
+export const deleteDealRoom = async (req, res, next) => {
+    try {
+        const dealRoom = await DealRoom.findById(req.params.id);
+
+        if (!dealRoom) {
+            return res.status(404).json({ success: false, message: 'Deal Room not found.' });
+        }
+
+        // Security check: Ensure the current user is part of this deal room
+        if (dealRoom.businessId.toString() !== req.user.id && dealRoom.investorId.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'You are not authorized to delete this deal room.' });
+        }
+
+        // Delete all associated chat messages to keep the database clean
+        await ChatMessage.deleteMany({ dealRoomId: req.params.id });
+        
+        // We can also delete checklist items if they exist
+        // await ChecklistItem.deleteMany({ dealRoomId: req.params.id });
+
+        // Finally, remove the deal room itself
+        await dealRoom.deleteOne();
+
+        res.status(200).json({ success: true, data: {} });
+    } catch (error) {
+        next(error);
+    }
+};

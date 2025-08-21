@@ -1,84 +1,131 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import ProfileCard from '../components/dashboard/ProfileCard.jsx';
-import QuickActions from '../components/dashboard/QuickActions.jsx';
-import BusinessDashboard from '../components/dashboard/role-specific/BusinessDashboard.jsx';
-import InvestorDashboard from '../components/dashboard/role-specific/InvestorDashboard.jsx';
-import AdvisorDashboard from '../components/dashboard/role-specific/AdvisorDashboard.jsx';
-import BankerDashboard from '../components/dashboard/role-specific/BankerDashboard.jsx';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Home, User, Settings, MessageSquare, Bell, LogOut, Menu, X } from "lucide-react";
+import { BriefcaseIcon } from '../assets/icons.jsx';
+import NotificationBell from '../components/shared/NotificationBell.jsx';
+import { logout } from '../store/authSlice.js';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const DashboardPage = () => {
-    const { user } = useSelector((state) => state.auth);
-
-    if (!user) return null;
-
-    const renderRoleSpecificContent = () => {
-        switch (user.role) {
-            case 'business': return <BusinessDashboard />;
-            case 'investor': return <InvestorDashboard />;
-            case 'advisor': return <AdvisorDashboard />;
-            case 'banker': return <BankerDashboard />;
-            default:
-                return (
-                    <motion.div 
-                        className="bg-white/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200/50"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                    >
-                        <h2 className="text-xl font-bold text-slate-800">Welcome to VENTURVAULT</h2>
-                        <p className="mt-2 text-slate-600">Your journey starts here. Explore the platform to find what you're looking for.</p>
-                    </motion.div>
-                );
-        }
-    };
-    
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
-    };
+const SidebarContent = () => {
+    const location = useLocation();
+    const sidebarLinks = [
+        { name: "Dashboard", icon: <Home size={18} />, path: "/dashboard" },
+        { name: "Conversations", icon: <MessageSquare size={18} />, path: "/deal-rooms" },
+        { name: "My Profile", icon: <User size={18} />, path: "/profile" },
+        { name: "Settings", icon: <Settings size={18} />, path: "/settings" },
+    ];
 
     return (
-        <div className="bg-slate-100 min-h-full">
-            <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                {/* Header */}
-                <motion.div 
-                    className="pb-8 border-b border-gray-200"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-                    <p className="mt-1 text-sm text-slate-500">Welcome back, {user.profile.firstName}. Here's your overview.</p>
-                </motion.div>
-
-                {/* Main Content Grid */}
-                <motion.div 
-                    className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    {/* Left Column */}
-                    <motion.div className="lg:col-span-2 space-y-8" variants={itemVariants}>
-                        {renderRoleSpecificContent()}
-                    </motion.div>
-
-                    {/* Right Column (Sidebar) */}
-                    <motion.div className="space-y-8" variants={itemVariants}>
-                        <ProfileCard user={user} />
-                        <QuickActions userRole={user.role} />
-                    </motion.div>
-                </motion.div>
+        <>
+            <div className="px-6 py-5 border-b">
+                <Link to="/dashboard" className="flex items-center space-x-2 group">
+                    <BriefcaseIcon className="h-8 w-8 text-teal-600" />
+                    <span className="font-bold text-2xl text-slate-800">VENTURVAULT</span>
+                </Link>
             </div>
-        </div>
+            <nav className="mt-6 flex-1 space-y-1">
+                {sidebarLinks.map((link) => {
+                    const isActive = location.pathname === link.path;
+                    return (
+                        <Link
+                            key={link.name}
+                            to={link.path}
+                            className={`flex items-center space-x-3 mx-4 px-4 py-3 text-sm font-medium rounded-lg transition ${
+                                isActive 
+                                ? 'bg-teal-50 text-teal-700 font-semibold' 
+                                : 'text-slate-600 hover:bg-slate-100'
+                            }`}
+                        >
+                            {link.icon}
+                            <span>{link.name}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
+        </>
     );
+};
+
+const DashboardPage = () => {
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar
+
+  if (!user) return null;
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+  };
+
+  return (
+    <div className="flex min-h-screen text-slate-800 bg-slate-50">
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+            <>
+                {/* Overlay */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="fixed inset-0 bg-black/30 z-40 md:hidden"
+                />
+                {/* Sidebar Content */}
+                <motion.aside
+                    initial={{ x: "-100%" }}
+                    animate={{ x: 0 }}
+                    exit={{ x: "-100%" }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    className="fixed top-0 left-0 h-full w-64 bg-white z-50 flex flex-col"
+                >
+                    <SidebarContent />
+                </motion.aside>
+            </>
+        )}
+      </AnimatePresence>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex flex-col w-64 border-r bg-white">
+        <SidebarContent />
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Topbar */}
+        <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:px-8">
+          {/* Hamburger Menu Button for Mobile */}
+          <button onClick={() => setIsSidebarOpen(true)} className="md:hidden text-slate-600">
+            <Menu size={24} />
+          </button>
+          
+          <div>
+            <h1 className="text-lg font-semibold text-slate-800">
+              Dashboard Overview
+            </h1>
+          </div>
+          <div className="flex items-center space-x-5">
+            <NotificationBell />
+            <button 
+              onClick={handleLogout}
+              className="flex items-center space-x-2 text-sm font-medium text-slate-600 hover:text-red-600 transition-colors"
+            >
+              <LogOut size={16} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Content */}
+        <div className="p-4 md:p-8 flex-1 overflow-y-auto">
+            <Outlet /> 
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default DashboardPage;

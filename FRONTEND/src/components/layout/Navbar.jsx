@@ -1,48 +1,90 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../store/authSlice.js';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Home, User, Settings, MessageSquare, Bell, LogOut } from "lucide-react";
 import { BriefcaseIcon } from '../../assets/icons.jsx';
-import NotificationBell from '../shared/NotificationBell.jsx';
+import NotificationBell from '../../components/shared/NotificationBell.jsx';
+import { logout } from '../../store/authSlice.js';
 
-const Navbar = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+const DashboardPage = () => {
   const { user } = useSelector((state) => state.auth);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  if (!user) return null;
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
   };
 
+  const sidebarLinks = [
+    { name: "Dashboard", icon: <Home size={18} />, path: "/dashboard" },
+    { name: "Conversations", icon: <MessageSquare size={18} />, path: "/deal-rooms" },
+    { name: "My Profile", icon: <User size={18} />, path: "/profile" },
+    { name: "Settings", icon: <Settings size={18} />, path: "/settings" },
+  ];
+
   return (
-    <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200/50">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          <Link to={user ? '/dashboard' : '/'} className="flex-shrink-0 flex items-center space-x-2 group">
-            <BriefcaseIcon className="h-8 w-8 text-teal-600 group-hover:text-teal-500 transition-colors" />
-            <span className="font-bold text-2xl text-slate-800 group-hover:text-slate-600 transition-colors">VENTURVAULT</span>
-          </Link>
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <>
-                <NotificationBell />
-                <Link to="/dashboard" className="hidden sm:block px-4 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-gray-100 transition-all">Dashboard</Link>
-                {/* NEW LINK TO DEAL ROOMS */}
-                <Link to="/deal-rooms" className="hidden sm:block px-4 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-gray-100 transition-all">Conversations</Link>
-                <button onClick={handleLogout} className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-slate-700 hover:bg-slate-800 transition-all">Logout</button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-700 bg-gray-100 hover:bg-gray-200 transition-all">Log In</Link>
-                <Link to="/register" className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-teal-600 hover:bg-teal-700 transition-all shadow-sm hover:shadow-md">Get Started</Link>
-              </>
-            )}
-          </div>
+    <div className="flex min-h-screen text-slate-800 bg-slate-50">
+      {/* Sidebar */}
+      <aside className="hidden md:flex flex-col w-64 border-r bg-white">
+        <div className="px-6 py-5 border-b">
+            <Link to="/dashboard" className="flex items-center space-x-2 group">
+              <BriefcaseIcon className="h-8 w-8 text-teal-600" />
+              <span className="font-bold text-2xl text-slate-800">VENTURVAULT</span>
+            </Link>
         </div>
-      </nav>
-    </header>
+        <nav className="mt-6 flex-1 space-y-1">
+          {sidebarLinks.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={`flex items-center space-x-3 mx-4 px-4 py-3 text-sm font-medium rounded-lg transition ${
+                    isActive 
+                    ? 'bg-teal-50 text-teal-700 font-semibold' 
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {link.icon}
+                <span>{link.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Topbar */}
+        <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:px-8">
+          <div>
+            <h1 className="text-lg font-semibold text-slate-800">
+              {/* This could be dynamic based on the page */}
+              Dashboard Overview
+            </h1>
+          </div>
+          <div className="flex items-center space-x-5">
+            <NotificationBell />
+            <button 
+              onClick={handleLogout}
+              className="flex items-center space-x-2 text-sm font-medium text-slate-600 hover:text-red-600 transition-colors"
+            >
+              <LogOut size={16} />
+              <span>Logout</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Content - This is where the nested routes will render */}
+        <div className="p-4 md:p-8 flex-1 overflow-y-auto">
+            <Outlet /> 
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default Navbar;
+export default DashboardPage;

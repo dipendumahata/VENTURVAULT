@@ -17,3 +17,33 @@ export const endorseUser = async (req, res, next) => {
         res.status(200).json({ success: true, data: userToEndorse.profile.endorsements });
     } catch (error) { next(error); }
 };
+
+export const updateUserProfile = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+
+        if (user) {
+            user.profile.firstName = req.body.firstName || user.profile.firstName;
+            user.profile.lastName = req.body.lastName || user.profile.lastName;
+            user.profile.phone = req.body.phone || user.profile.phone;
+
+            user.profile.location = req.body.location || user.profile.location;
+            user.profile.linkedin = req.body.linkedin || user.profile.linkedin;
+            user.profile.bio = req.body.bio || user.profile.bio;
+
+            // Note: Email and role changes should be handled by a separate, more secure process.
+            // Password changes should have their own dedicated endpoint.
+
+            const updatedUser = await user.save();
+
+            res.status(200).json({
+                success: true,
+                data: updatedUser
+            });
+        } else {
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    } catch (error) {
+        next(error);
+    }
+};

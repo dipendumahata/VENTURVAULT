@@ -44,7 +44,7 @@ const AdvisorDashboard = () => {
             case 'browseLoans':
                 return loanProducts.length > 0 ? (
                     loanProducts.slice(0, 5).map(l => (
-                        <Link to="/loan-products" key={l._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
+                        <Link to={`/loan-products/${l._id}`} key={l._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
                             <p className="font-semibold text-slate-800">{l.productName}</p>
                         </Link>
                     ))

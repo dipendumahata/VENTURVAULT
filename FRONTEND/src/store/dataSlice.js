@@ -100,7 +100,25 @@ export const fetchMyDealRooms = createAsyncThunk('data/fetchMyDealRooms', async 
     try { const { data } = await API.get('/deal-rooms'); return data.data; }
     catch (err) { return rejectWithValue(err.response?.data?.error); }
 });
-
+export const deleteDealRoom = createAsyncThunk('data/deleteDealRoom',async (dealRoomId, { dispatch, rejectWithValue }) => {
+    try {
+      await API.delete(`/deal-rooms/${dealRoomId}`);
+      // After deleting, re-fetch the list of deal rooms to update the UI
+dispatch(fetchMyDealRooms());return dealRoomId;} catch (err) {return rejectWithValue(err.response?.data?.error || 'Could not delete deal room.')}});
+export const fetchInvestorProfile = createAsyncThunk('data/fetchInvestorProfile', async (_, { rejectWithValue }) => { try { const { data } = await API.get('/investors/profile/me'); return data.data; } catch (err) { return rejectWithValue(err.response.data.error); } });
+export const updateInvestorProfile = createAsyncThunk('data/updateInvestorProfile', async (profileData, { dispatch, rejectWithValue }) => { try { const { data } = await API.put('/investors/profile', profileData); dispatch(fetchInvestorProfile()); return data.data; } catch (err) { return rejectWithValue(err.response.data.error); } });
+// NEW: Async thunk to submit a loan application
+export const applyForLoan = createAsyncThunk(
+  'data/applyForLoan',
+  async ({ productId, applicationData }, { rejectWithValue }) => {
+    try {
+      const { data } = await API.post(`/banking/products/${productId}/apply`, applicationData);
+      return data.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.error || 'Could not submit application.');
+    }
+  }
+);
 
 const dataSlice = createSlice({
   name: 'data',
@@ -118,6 +136,8 @@ const dataSlice = createSlice({
     currentDealRoom: null,
     loading: false,
     error: null,
+    dealRooms: [],
+    investorProfile: null,
   },
   reducers: {
     clearSelectedItem: (state) => { state.selectedItem = null; },
@@ -144,11 +164,7 @@ const dataSlice = createSlice({
       .addCase(fetchProposalById.pending, (state) => { state.loading = true; state.selectedProposal = null; state.error = null; })
       .addCase(fetchProposalById.fulfilled, (state, action) => { state.loading = false; state.selectedProposal = action.payload; })
       .addCase(fetchProposalById.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
-      .addCase(expressInterestInProposal.fulfilled, (state, action) => {
-        if (state.selectedProposal && state.selectedProposal._id === action.payload.proposalId) {
-            state.selectedProposal.interestedInvestors = action.payload.interestedInvestors;
-        }
-      })
+      .addCase(expressInterestInProposal.fulfilled, (state, action) => {if (state.selectedProposal && state.selectedProposal._id === action.payload.proposalId) {state.selectedProposal.interestedInvestors = action.payload.interestedInvestors;}})
       .addCase(expressInterestInProposal.rejected, (state, action) => { state.error = action.payload; })
       .addCase(fetchMyProposals.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchMyProposals.fulfilled, (state, action) => { state.loading = false; state.myProposals = action.payload; })
@@ -194,7 +210,12 @@ const dataSlice = createSlice({
       .addCase(fetchGigById.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
       .addCase(fetchLoanProductById.pending, (state) => { state.loading = true; state.selectedItem = null; })
       .addCase(fetchLoanProductById.fulfilled, (state, action) => { state.loading = false; state.selectedItem = action.payload; })
-      .addCase(fetchLoanProductById.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
+      .addCase(fetchLoanProductById.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(deleteDealRoom.fulfilled, (state, action) => {state.dealRooms = state.dealRooms.filter(room => room._id !== action.payload);})
+      .addCase(fetchInvestorProfile.fulfilled, (state, action) => {state.investorProfile = action.payload;})
+      .addCase(applyForLoan.pending, (state) => { state.loading = true; })
+      .addCase(applyForLoan.fulfilled, (state) => { state.loading = false; })
+      .addCase(applyForLoan.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
   },
 });
 

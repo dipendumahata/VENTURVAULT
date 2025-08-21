@@ -4,7 +4,8 @@ import { createLoanProduct,
     getLoanProducts, 
     getMyLoanProducts, 
     getLoanProductById, 
-    updateLoanProduct } from '../controllers/bankingController.js';
+    updateLoanProduct,
+    applyForLoan } from '../controllers/bankingController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -18,6 +19,9 @@ router.route('/products')
 router.route('/products/:id')
     .get(getLoanProductById)
     .put(authorize('banker'), updateLoanProduct);
+
+router.route('/products/:id/apply')
+    .post(authorize('business'), applyForLoan);
 
 router.route('/my-products')
   .get(authorize('banker'), getMyLoanProducts);

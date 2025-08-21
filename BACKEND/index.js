@@ -46,7 +46,7 @@ const PORT = process.env.PORT || 5001;
 // Core Middleware
 // Define allowed origins
 const allowedOrigins = [
-    'https://venturvault.vercel.app' // Your Vercel frontend URL
+    'https://venturvault.vercel.app',
 ];
 
 app.use(cors({
@@ -71,6 +71,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/insights', insightsRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/users', userRoutes);
 
 
 // Custom Error Handler Middleware (must be last)

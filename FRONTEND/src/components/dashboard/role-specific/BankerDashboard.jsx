@@ -44,7 +44,7 @@ const BankerDashboard = () => {
             case 'browseGigs':
                 return gigs.length > 0 ? (
                     gigs.slice(0, 5).map(g => (
-                        <Link to="/gigs" key={g._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
+                        <Link to={`/gigs/${g._id}`} key={g._id} className="block p-4 border-b hover:bg-gray-50/50 transition-colors">
                             <p className="font-semibold text-slate-800">{g.title}</p>
                         </Link>
                     ))

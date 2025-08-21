@@ -66,6 +66,19 @@ export const fetchUserByToken = createAsyncThunk(
   }
 );
 
+// NEW: Async thunk to update the core user profile
+export const updateUserProfile = createAsyncThunk(
+  'auth/updateUserProfile',
+  async (profileData, { rejectWithValue }) => {
+    try {
+      const { data } = await API.put('/users/profile', profileData);
+      return data.data; // Return the updated user object
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.error || 'Could not update profile.');
+    }
+  }
+);
+
 // ============================================================================
 // AUTH SLICE
 // Defines the initial state, reducers for synchronous actions, and handles
@@ -144,6 +157,9 @@ const authSlice = createSlice({
       .addCase(fetchUserByToken.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload; // Can be used to show a "Session Expired" message
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.user = action.payload; // Update the user in the store with the new data
       });
   },
 });

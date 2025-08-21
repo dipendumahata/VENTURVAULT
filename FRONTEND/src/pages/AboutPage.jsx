@@ -15,7 +15,3 @@ const AboutPage = () => {
 };
 
 export default AboutPage;
-{/* <div className="text-center py-16 bg-white rounded-lg shadow-md">
-                            <h3 className="text-xl font-semibold text-slate-800">No proposals yet</h3>
-                            <p className="mt-2 text-slate-500">Ready to share your big idea? Create your first proposal.</p>
-                        </div> */}

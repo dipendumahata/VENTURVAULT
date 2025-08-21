@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchMyProposals, publishProposal } from '../store/dataSlice.js'; // Import publishProposal
+import { fetchMyProposals, publishProposal } from '../store/dataSlice.js';
 import PageLoader from '../components/layout/PageLoader.jsx';
 
 const StatusBadge = ({ status }) => {
@@ -63,10 +63,10 @@ const MyProposalsPage = () => {
                                         </div>
                                     </div>
                                     <div className="bg-gray-50 px-6 py-3 border-t flex items-center justify-between">
+                                        {/* THIS IS THE FIX: The link now points to the correct route */}
                                         <Link to={`/my-proposals/${proposal._id}`} className="text-sm font-semibold text-teal-600 hover:text-teal-800">
                                             Manage
                                         </Link>
-                                        {/* Conditionally render the Publish button */}
                                         {proposal.status === 'draft' && (
                                             <button 
                                                 onClick={() => handlePublish(proposal._id)}

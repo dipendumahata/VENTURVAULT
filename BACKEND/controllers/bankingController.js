@@ -1,4 +1,6 @@
 import LoanProduct from '../models/LoanProduct.js';
+import LoanApplication from '../models/LoanApplication.js'; 
+import Notification from '../models/Notification.js';
 
 export const createLoanProduct = async (req, res, next) => {
   try {
@@ -52,6 +54,46 @@ export const updateLoanProduct = async (req, res, next) => {
         }
         product = await LoanProduct.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         res.status(200).json({ success: true, data: product });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const applyForLoan = async (req, res, next) => {
+    try {
+        const loanProduct = await LoanProduct.findById(req.params.id);
+
+        if (!loanProduct) {
+            return res.status(404).json({ success: false, message: 'Loan product not found' });
+        }
+
+        const { applicationDetails } = req.body;
+
+        // In a real application, file upload logic would go here.
+        // You would process the files from the request and get their URLs.
+        // For now, we'll assume the details are in the request body.
+
+        const application = await LoanApplication.create({
+            loanProductId: req.params.id,
+            businessId: req.user.id,
+            bankerId: loanProduct.bankerId,
+            applicationDetails,
+            // submittedDocuments: ['url1', 'url2'] // Example
+        });
+
+        // Notify the banker about the new application
+        const notificationMessage = `You have a new loan application from ${req.user.profile.firstName} for your product: "${loanProduct.productName}"`;
+        const notification = await Notification.create({
+            userId: loanProduct.bankerId,
+            message: notificationMessage,
+            link: `/my-loan-applications` // A future page for bankers
+        });
+        
+        const io = req.app.get('io');
+        io.to(loanProduct.bankerId.toString()).emit('new_notification', notification);
+
+        res.status(201).json({ success: true, data: application });
+
     } catch (error) {
         next(error);
     }
